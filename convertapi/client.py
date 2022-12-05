@@ -12,7 +12,13 @@ class Client:
 
 	def post(self, path, payload, timeout = None):
 		timeout = timeout or convertapi.timeout
-		r = requests.post(self.url(path), data = payload, headers = self.headers(), timeout = timeout)
+
+		url = self.url(path)
+		webhook = payload.pop('WebHook', None)
+		if webhook:
+			url += f'&WebHook={webhook}'
+
+		r = requests.post(url, data = payload, headers = self.headers(), timeout = timeout)
 		return self.handle_response(r)
 
 	def upload(self, io, filename):
